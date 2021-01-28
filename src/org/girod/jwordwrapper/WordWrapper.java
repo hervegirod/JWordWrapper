@@ -31,21 +31,54 @@ package org.girod.jwordwrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
+ * This class allows to wrap a long sentence on several lines. The class allows to:
+ * <ul>
+ * <li>Specify tyhe maximum number of columns for each line</li>
+ * <li>Hyphenate the words</li>
+ * <li>Limit the maximum number of lines</li>
+ * </ul>
  *
  * @since 0.1
  */
 public class WordWrapper {
+   private static final Pattern HYPHEN = Pattern.compile("(?i)[aiou][aeiou]*|e[aeiou]*(?!d?\\\\b)");
 
+   /**
+    * Wrap a sentence without limiting the number of lines, and without hyphenation.
+    *
+    * @param sentence the sentence
+    * @param maxLength the maximum length of each line
+    * @return the wrapped sentence
+    */
    public static List<String> wrap(String sentence, int maxLength) {
       return wrap(sentence, maxLength, -1, false);
    }
 
+   /**
+    * Wrap a sentence without limiting the number of lines, and with or without hyphenation.
+    *
+    * @param sentence the sentence
+    * @param maxLength the maximum length of each line
+    * @param hyphenate true to hyphenate words
+    * @return the wrapped sentence
+    */
    public static List<String> wrap(String sentence, int maxLength, boolean hyphenate) {
       return wrap(sentence, maxLength, -1, hyphenate);
    }
 
+   /**
+    * Wrap a sentence, with or without hyphenation.
+    *
+    * @param sentence the sentence
+    * @param maxLength the maximum length of each line
+    * @param maxLines the maximum number of lines (set -1 to not limit the number of lines)
+    * @param hyphenate true to hyphenate words
+    * @return the wrapped sentence
+    */
    public static List<String> wrap(String sentence, int maxLength, int maxLines, boolean hyphenate) {
       List<String> list = new ArrayList<>();
       if (sentence.length() <= maxLength) {
@@ -74,68 +107,52 @@ public class WordWrapper {
             currentLength += lengthToAdd;
          } else if (currentLength + lengthToAdd == maxLength + 1) {
             currentBuf.append(tk);
-            if (maxLines == -1 || list.size() < maxLines) {
-               if (maxLines > 0 && list.size() == maxLines - 1) {
-                  String str = currentBuf.toString();
-                  str = str.substring(0, maxLength - 3) + "...";
-                  list.add(str);
-                  break;
-               } else {
-                  list.add(currentBuf.toString().trim());
-                  currentBuf = new StringBuilder();
-                  currentLength = 0;
-               }
-            }
-         } else if (!hyphenate) {
-            if (maxLines == -1 || list.size() < maxLines) {
-               String str = currentBuf.toString();
-               list.add(str.trim());
-               currentBuf = new StringBuilder();
-               currentBuf.append(tk);
-               currentLength = tk.length();
-            } else {
-               String str = list.remove(list.size());
-               if (str.length() < maxLength) {
-                  str = str.substring(0, maxLength - 3) + "...";
-                  list.add(str);
-               }
-               break;
-            }
+         } else if (!hyphenate || tk.contains("-")) {
+            String str = currentBuf.toString();
+            list.add(str.trim());
+            currentBuf = new StringBuilder();
+            currentBuf.append(tk);
+            currentLength = tk.length();
          } else {
-            if (maxLines == -1 || list.size() < maxLines) {
-               String str = currentBuf.toString();
-               list.add(str);
-               currentBuf = new StringBuilder();
-               currentBuf.append(tk);
-               currentLength = tk.length();
-            } else {
-               String str = list.remove(list.size());
-               if (str.length() < maxLength) {
-                  str = str.substring(0, maxLength - 3) + "...";
+            Matcher m = HYPHEN.matcher(tk);
+            int end = 0;
+            boolean isFirst = true;
+            while (m.find()) {
+               int start = end;
+               end = m.end();
+               String syllable = tk.substring(start, end);
+               int len = end - start;
+               if (currentLength + len + 1 <= maxLength) {
+                  currentBuf.append(syllable);
+                  currentLength += len + 1;
+               } else {
+                  if (!isFirst) {
+                     currentBuf.append("-");
+                  }
+                  String str = currentBuf.toString().trim();
                   list.add(str);
+                  currentBuf = new StringBuilder();
+                  currentBuf.append(syllable);
+                  currentLength = syllable.length();
                }
-               break;
+               if (isFirst) {
+                  isFirst = false;
+               }
             }
          }
       }
       if (currentBuf.length() != 0) {
-         int _length = currentBuf.length();
-         if (currentLength + _length <= maxLength) {
-            currentBuf.append(currentBuf.toString().trim());
-         } else if (maxLines == -1 || list.size() < maxLines) {
-            if (maxLines > 0 && list.size() == maxLines - 1) {
-               String str = currentBuf.toString();
-               str = str.substring(0, maxLength - 3) + "...";
-               list.add(str);
-            } else {
-               list.add(currentBuf.toString().trim());
-            }
-         } else {
-            String str = list.remove(list.size());
-            if (str.length() < maxLength) {
-               str = str.substring(0, maxLength - 3) + "...";
-               list.add(str);
-            }
+         list.add(currentBuf.toString().trim());
+      }
+      if (maxLines > 0 && list.size() > maxLines) {
+         for (int i = 0; i < maxLines; i++) {
+            list.remove(list.size() - 1);
+         }
+         String str = list.get(list.size() - 1);
+         if (str.length() > 3) {
+            list.remove(list.size() - 1);
+            str = str.substring(0, str.length() - 3) + "...";
+            list.add(str);
          }
       }
    }
