@@ -37,14 +37,16 @@ import java.util.regex.Pattern;
 /**
  * This class allows to wrap a long sentence on several lines. The class allows to:
  * <ul>
- * <li>Specify tyhe maximum number of columns for each line</li>
+ * <li>Specify the maximum number of columns for each line</li>
  * <li>Hyphenate the words</li>
+ * <li>Allow to keep long URLs even with hyphenation</li>
  * <li>Limit the maximum number of lines</li>
  * </ul>
  *
  * @since 0.1
  */
 public class WordWrapper {
+   private static final Pattern URL = Pattern.compile("\\\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
    private static final Pattern HYPHEN = Pattern.compile("(?i)[aiou][aeiou]*|e[aeiou]*(?!d?\\\\b)");
 
    /**
@@ -55,7 +57,19 @@ public class WordWrapper {
     * @return the wrapped sentence
     */
    public static List<String> wrap(String sentence, int maxLength) {
-      return wrap(sentence, maxLength, -1, false);
+      return wrap(sentence, maxLength, -1, false, false);
+   }
+
+   /**
+    * Wrap a sentence limiting the number of lines
+    *
+    * @param sentence the sentence
+    * @param maxLength the maximum length of each line
+    * @param maxLines the maximum number of lines (set -1 to not limit the number of lines)
+    * @return the wrapped sentence
+    */
+   public static List<String> wrap(String sentence, int maxLength, int maxLines) {
+      return wrap(sentence, maxLength, maxLines, false, false);
    }
 
    /**
@@ -67,7 +81,33 @@ public class WordWrapper {
     * @return the wrapped sentence
     */
    public static List<String> wrap(String sentence, int maxLength, boolean hyphenate) {
-      return wrap(sentence, maxLength, -1, hyphenate);
+      return wrap(sentence, maxLength, -1, hyphenate, false);
+   }
+
+   /**
+    * Wrap a sentence without limiting the number of lines, and with or without hyphenation.
+    *
+    * @param sentence the sentence
+    * @param maxLength the maximum length of each line
+    * @param hyphenate true to hyphenate words
+    * @param keepURLs true if URLs must not be broken
+    * @return the wrapped sentence
+    */
+   public static List<String> wrap(String sentence, int maxLength, boolean hyphenate, boolean keepURLs) {
+      return wrap(sentence, maxLength, -1, hyphenate, keepURLs);
+   }
+
+   /**
+    * Wrap a sentence, with or without hyphenation, and allowing to break URLs.
+    *
+    * @param sentence the sentence
+    * @param maxLength the maximum length of each line
+    * @param maxLines the maximum number of lines (set -1 to not limit the number of lines)
+    * @param hyphenate true to hyphenate words
+    * @return the wrapped sentence
+    */
+   public static List<String> wrap(String sentence, int maxLength, int maxLines, boolean hyphenate) {
+      return wrap(sentence, maxLength, maxLines, hyphenate, false);
    }
 
    /**
@@ -77,20 +117,21 @@ public class WordWrapper {
     * @param maxLength the maximum length of each line
     * @param maxLines the maximum number of lines (set -1 to not limit the number of lines)
     * @param hyphenate true to hyphenate words
+    * @param keepURLs true if URLs must not be broken
     * @return the wrapped sentence
     */
-   public static List<String> wrap(String sentence, int maxLength, int maxLines, boolean hyphenate) {
+   public static List<String> wrap(String sentence, int maxLength, int maxLines, boolean hyphenate, boolean keepURLs) {
       List<String> list = new ArrayList<>();
       if (sentence.length() <= maxLength) {
          list.add(sentence);
       } else {
-         doWrapImpl(list, sentence, maxLength, maxLines, hyphenate);
+         doWrapImpl(list, sentence, maxLength, maxLines, hyphenate, keepURLs);
       }
 
       return list;
    }
 
-   private static void doWrapImpl(List<String> list, String sentence, int maxLength, int maxLines, boolean hyphenate) {
+   private static void doWrapImpl(List<String> list, String sentence, int maxLength, int maxLines, boolean hyphenate, boolean keepURLs) {
       int currentLength = 0;
       StringBuilder currentBuf = new StringBuilder();
       StringTokenizer tok = new StringTokenizer(sentence, " ");
@@ -108,6 +149,12 @@ public class WordWrapper {
          } else if (currentLength + lengthToAdd == maxLength + 1) {
             currentBuf.append(tk);
          } else if (!hyphenate || tk.contains("-")) {
+            String str = currentBuf.toString();
+            list.add(str.trim());
+            currentBuf = new StringBuilder();
+            currentBuf.append(tk);
+            currentLength = tk.length();
+         } else if (keepURLs && URL.matcher(tk).matches()) {
             String str = currentBuf.toString();
             list.add(str.trim());
             currentBuf = new StringBuilder();
@@ -139,6 +186,23 @@ public class WordWrapper {
                   isFirst = false;
                }
             }
+            if (end <= tk.length() - 1) {
+               String syllable = tk.substring(end);
+               int len = syllable.length();
+               if (currentLength + len + 1 <= maxLength) {
+                  currentBuf.append(syllable);
+                  currentLength += len + 1;
+               } else {
+                  if (!isFirst) {
+                     currentBuf.append("-");
+                  }
+                  String str = currentBuf.toString().trim();
+                  list.add(str);
+                  currentBuf = new StringBuilder();
+                  currentBuf.append(syllable);
+                  currentLength = syllable.length();
+               }
+            }
          }
       }
       if (currentBuf.length() != 0) {
@@ -149,11 +213,27 @@ public class WordWrapper {
             list.remove(list.size() - 1);
          }
          String str = list.get(list.size() - 1);
+         str = completeWithSpaces(str, maxLength);
          if (str.length() > 3) {
             list.remove(list.size() - 1);
             str = str.substring(0, str.length() - 3) + "...";
             list.add(str);
          }
+      }
+   }
+
+   private static String completeWithSpaces(String str, int maxLength) {
+      if (str.length() >= maxLength) {
+         return str;
+      } else {
+         int length = str.length();
+         int toRepeat = maxLength - length;
+         StringBuilder buf = new StringBuilder();
+         buf.append(str);
+         for (int i = 0; i < toRepeat; i++) {
+            buf.append(" ");
+         }
+         return buf.toString();
       }
    }
 }
