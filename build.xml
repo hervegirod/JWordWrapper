@@ -36,7 +36,7 @@
    <!-- =================================================================== -->
 
    <target description="fetch version" depends="-init-project" name="version">
-      <loadproperties srcFile="${src.dir}/org/girod/wordwrap/resources/wordwrap.properties">
+      <loadproperties srcFile="${src.dir}/org/girod/jwordwrapper/resources/wordwrap.properties">
          <filterchain>
             <linecontains>
                <contains value="version"/>
