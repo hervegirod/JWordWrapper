@@ -93,4 +93,17 @@ public class WordWrapperSyllablesTest {
       assertEquals("Second syllable", "va", syllables.get(1));
       assertEquals("Third syllable", ".net", syllables.get(2));
    }
+
+   /**
+    * Test of getSyllables method, of class WordWrapper.
+    */
+   @Test
+   public void testGetSyllables3() {
+      System.out.println("WordWrapperTest : testGetSyllables3");
+      String sentence = "sentence";
+
+      List<String> result = WordWrapper.getSyllables(sentence);
+      assertNotNull("Result should not be null", result);
+      assertEquals("Result should have 3 syllables", 3, result.size());
+   }
 }
