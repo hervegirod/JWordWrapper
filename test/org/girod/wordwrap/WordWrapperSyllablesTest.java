@@ -41,9 +41,9 @@ import static org.junit.Assert.*;
  *
  * @since 0.1
  */
-public class WordWrapperTest {
+public class WordWrapperSyllablesTest {
 
-   public WordWrapperTest() {
+   public WordWrapperSyllablesTest() {
    }
 
    @BeforeClass
@@ -63,61 +63,34 @@ public class WordWrapperTest {
    }
 
    /**
-    * Test of wrap method, of class WordWrapper.
+    * Test of getSyllables method, of class WordWrapper.
     */
    @Test
-   public void testWrap() {
-      System.out.println("WordWrapperTest : testWrap");
-      String sentence = "the test";
+   public void testGetSyllables() {
+      System.out.println("WordWrapperTest : testGetSyllables");
+      String sentence = "javatest";
 
-      List<String> result = WordWrapper.wrap(sentence, 10);
-      assertNotNull("Result should not be null", result);
-      assertEquals("Result should have one line", 1, result.size());
-      assertEquals("Result should be identical", sentence, result.get(0));
+      List<String> syllables = WordWrapper.getSyllables(sentence);
+      assertNotNull("Result should not be null", syllables);
+      assertEquals("Result should have 3 syllables", 3, syllables.size());
+      assertEquals("First syllable", "ja", syllables.get(0));
+      assertEquals("Second syllable", "va", syllables.get(1));
+      assertEquals("Third syllable", "test", syllables.get(2));
    }
 
    /**
-    * Test of wrap method, of class WordWrapper.
+    * Test of getSyllables method, of class WordWrapper.
     */
    @Test
-   public void testWrap2() {
-      System.out.println("WordWrapperTest : testWrap2");
-      String sentence = "the test";
+   public void testGetSyllables2() {
+      System.out.println("WordWrapperTest : testGetSyllables2");
+      String sentence = "http://java.net";
 
-      List<String> result = WordWrapper.wrap(sentence, 4);
-      assertNotNull("Result should not be null", result);
-      assertEquals("Result should have 2 lines", 2, result.size());
-      assertEquals("Result", "the", result.get(0));
-      assertEquals("Result", "test", result.get(1));
-   }
-
-   /**
-    * Test of wrap method, of class WordWrapper.
-    */
-   @Test
-   public void testWrap3() {
-      System.out.println("WordWrapperTest : testWrap3");
-      String sentence = "bababa bibibi";
-
-      List<String> result = WordWrapper.wrap(sentence, 8);
-      assertNotNull("Result should not be null", result);
-      assertEquals("Result should have 2 lines", 2, result.size());
-      assertEquals("Result", "bababa", result.get(0));
-      assertEquals("Result", "bibibi", result.get(1));
-   }
-
-   /**
-    * Test of wrap method, of class WordWrapper.
-    */
-   @Test
-   public void testWrap4() {
-      System.out.println("WordWrapperTest : testWrap4");
-      String sentence = "the sentence";
-
-      List<String> result = WordWrapper.wrap(sentence, 10);
-      assertNotNull("Result should not be null", result);
-      assertEquals("Result should have 2 lines", 2, result.size());
-      assertEquals("Result", "the", result.get(0));
-      assertEquals("Result", "sentence", result.get(1));
+      List<String> syllables = WordWrapper.getSyllables(sentence);
+      assertNotNull("Result should not be null", syllables);
+      assertEquals("Result should have 3 syllables", 3, syllables.size());
+      assertEquals("First syllable", "http://ja", syllables.get(0));
+      assertEquals("Second syllable", "va", syllables.get(1));
+      assertEquals("Third syllable", ".net", syllables.get(2));
    }
 }

@@ -29,6 +29,7 @@ the project website at the project page on https://github.com/hervegirod/JWordWr
 package org.girod.jwordwrapper;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -161,39 +162,17 @@ public class WordWrapper {
             currentBuf.append(tk);
             currentLength = tk.length();
          } else {
-            Matcher m = HYPHEN.matcher(tk);
-            int end = 0;
+            List<String> syllables = getSyllables(tk);
             boolean isFirst = true;
-            while (m.find()) {
-               int start = end;
-               end = m.end();
-               String syllable = tk.substring(start, end);
-               int len = end - start;
-               if (currentLength + len + 1 <= maxLength) {
-                  currentBuf.append(syllable);
-                  currentLength += len + 1;
-               } else {
-                  if (!isFirst) {
-                     currentBuf.append("-");
-                  }
-                  String str = currentBuf.toString().trim();
-                  list.add(str);
-                  currentBuf = new StringBuilder();
-                  currentBuf.append(syllable);
-                  currentLength = syllable.length();
-               }
-               if (isFirst) {
-                  isFirst = false;
-               }
-            }
-            if (end <= tk.length() - 1) {
-               String syllable = tk.substring(end);
+            Iterator<String> it = syllables.iterator();
+            while (it.hasNext()) {
+               String syllable = it.next();
                int len = syllable.length();
                if (currentLength + len + 1 <= maxLength) {
                   currentBuf.append(syllable);
                   currentLength += len + 1;
                } else {
-                  if (!isFirst) {
+                  if (!isFirst && it.hasNext()) {
                      currentBuf.append("-");
                   }
                   String str = currentBuf.toString().trim();
@@ -202,6 +181,7 @@ public class WordWrapper {
                   currentBuf.append(syllable);
                   currentLength = syllable.length();
                }
+               isFirst = false;
             }
          }
       }
@@ -220,6 +200,36 @@ public class WordWrapper {
             list.add(str);
          }
       }
+   }
+
+   /**
+    * Return the list of syllables in a word.
+    *
+    * @param word the word
+    * @return the syllables
+    */
+   public static List<String> getSyllables(String word) {
+      Matcher m = HYPHEN.matcher(word);
+      List<String> syllables = new ArrayList<>();
+      int end = 0;
+      boolean isFirst = true;
+      while (m.find()) {
+         int start = end;
+         end = m.end();
+         String syllable = word.substring(start, end);
+         if (isFirst) {
+            syllables.add(syllable);
+            isFirst = false;
+         } else {
+            syllables.add(syllable);
+         }
+      }
+      if (end < word.length()) {
+         String syllable = syllables.remove(syllables.size() - 1);
+         syllable += word.substring(end);
+         syllables.add(syllable);
+      }
+      return syllables;
    }
 
    private static String completeWithSpaces(String str, int maxLength) {

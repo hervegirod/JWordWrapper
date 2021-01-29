@@ -105,4 +105,19 @@ public class WordWrapperHyphenTest {
       assertEquals("Result", "bababa bi-", result.get(0));
       assertEquals("Result", "bobu", result.get(1));
    }
+
+   /**
+    * Test of wrap method, of class WordWrapper.
+    */
+   @Test
+   public void testWrap4() {
+      System.out.println("WordWrapperTest : testWrap4");
+      String sentence = "the sentence";
+
+      List<String> result = WordWrapper.wrap(sentence, 10, true);
+      assertNotNull("Result should not be null", result);
+      assertEquals("Result should have 2 lines", 2, result.size());
+      assertEquals("Result", "the se-", result.get(0));
+      assertEquals("Result", "ntence", result.get(1));
+   }
 }
