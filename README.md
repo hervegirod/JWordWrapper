@@ -8,6 +8,14 @@ The class allows to:
  * Allow to keep long URLs even with hyphenation
  * Limit the maximum number of lines
 
+# History
+## 0.1
+ * First version
+
+## 0.2
+ * Fix a possible NPE when getting the syllables from a pure numeric value, take accented characters into account
+ * Fix a possible case where some spaces would not be kept in the result
+
 # Examples
   ```
   // return one line with "the sentence"
