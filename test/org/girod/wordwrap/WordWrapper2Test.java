@@ -39,11 +39,11 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @version 0.2
+ * @since 0.2
  */
-public class WordWrapperSyllablesTest {
+public class WordWrapper2Test {
 
-   public WordWrapperSyllablesTest() {
+   public WordWrapper2Test() {
    }
 
    @BeforeClass
@@ -63,60 +63,34 @@ public class WordWrapperSyllablesTest {
    }
 
    /**
-    * Test of getSyllables method, of class WordWrapper.
+    * Test of wrap method, of class WordWrapper.
     */
    @Test
-   public void testGetSyllables() {
-      System.out.println("WordWrapperSyllablesTest : testGetSyllables");
-      String sentence = "javatest";
+   public void testWrap() {
+      System.out.println("WordWrapper2Test : testWrap");
+      String sentence = "Nationalité du JTAC elbow1 : États Unis . Plan de frequence : diamond 12 . ";
 
-      List<String> syllables = WordWrapper.getSyllables(sentence);
-      assertNotNull("Result should not be null", syllables);
-      assertEquals("Result should have 3 syllables", 3, syllables.size());
-      assertEquals("First syllable", "ja", syllables.get(0));
-      assertEquals("Second syllable", "va", syllables.get(1));
-      assertEquals("Third syllable", "test", syllables.get(2));
-   }
-
-   /**
-    * Test of getSyllables method, of class WordWrapper.
-    */
-   @Test
-   public void testGetSyllables2() {
-      System.out.println("WordWrapperSyllablesTest : testGetSyllables2");
-      String sentence = "http://java.net";
-
-      List<String> syllables = WordWrapper.getSyllables(sentence);
-      assertNotNull("Result should not be null", syllables);
-      assertEquals("Result should have 3 syllables", 3, syllables.size());
-      assertEquals("First syllable", "http://ja", syllables.get(0));
-      assertEquals("Second syllable", "va", syllables.get(1));
-      assertEquals("Third syllable", ".net", syllables.get(2));
-   }
-
-   /**
-    * Test of getSyllables method, of class WordWrapper.
-    */
-   @Test
-   public void testGetSyllables3() {
-      System.out.println("WordWrapperSyllablesTest : testGetSyllables3");
-      String sentence = "sentence";
-
-      List<String> result = WordWrapper.getSyllables(sentence);
+      List<String> result = WordWrapper.wrap(sentence, 70, 3, true);
       assertNotNull("Result should not be null", result);
-      assertEquals("Result should have 3 syllables", 3, result.size());
+      assertEquals("Result should have 2 lines", 2, result.size());
+      assertEquals("First line", "Nationalité du JTAC elbow1 : États Unis . Plan de frequence : diamond", result.get(0));
+      assertEquals("Second line", "12 .", result.get(1));
    }
    
    /**
-    * Test of getSyllables method, of class WordWrapper.
+    * Test of wrap method, of class WordWrapper.
     */
    @Test
-   public void testGetSyllables4() {
-      System.out.println("WordWrapperSyllablesTest : testGetSyllables4");
-      String sentence = "ete";
+   public void testWrap2() {
+      System.out.println("WordWrapper2Test : testWrap2");
+      String sentence = "Plan de fréquence du JTAC elbow1 : diamond 12 .  : fréquence  VHF :  150.150  Mhz. ";
 
-      List<String> result = WordWrapper.getSyllables(sentence);
+      List<String> result = WordWrapper.wrap(sentence, 70, 3, true);
       assertNotNull("Result should not be null", result);
-      assertEquals("Result should have 2 syllables", 2, result.size());
+      assertEquals("Result should have 2 lines", 2, result.size());
+      assertEquals("First line", "Plan de fréquence du JTAC elbow1 : diamond 12 . : fréquence VHF :", result.get(0));
+      assertEquals("Second line", "150.150 Mhz.", result.get(1));
    }   
+   
+   
 }

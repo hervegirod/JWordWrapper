@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
  */
 public class WordWrapper {
    private static final Pattern URL = Pattern.compile("\\\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
-   private static final Pattern HYPHEN = Pattern.compile("(?i)[aiou][aeiou]*|e[aeiou]*(?!d?\\\\b)");
+   private static final Pattern HYPHEN = Pattern.compile("(?i)[aàiîoôuù][aàeéèêiîoôuù]*|[eéèê][aàeéèêiîoôuù]*(?!d?\\\\b)");
 
    /**
     * Wrap a sentence without limiting the number of lines, and without hyphenation.
@@ -182,6 +182,10 @@ public class WordWrapper {
                   currentLength = syllable.length();
                }
                isFirst = false;
+               if (tok.hasMoreTokens()) {
+                  currentBuf.append(" ");
+                  currentLength++;
+               }
             }
          }
       }
@@ -213,9 +217,11 @@ public class WordWrapper {
       List<String> syllables = new ArrayList<>();
       int end = 0;
       boolean isFirst = true;
+      boolean hasFound = false;
       while (m.find()) {
          int start = end;
          end = m.end();
+         hasFound = true;
          String syllable = word.substring(start, end);
          if (isFirst) {
             syllables.add(syllable);
@@ -224,7 +230,9 @@ public class WordWrapper {
             syllables.add(syllable);
          }
       }
-      if (end < word.length()) {
+      if (!hasFound) {
+         syllables.add(word);
+      } else if (end < word.length()) {
          String syllable = syllables.remove(syllables.size() - 1);
          syllable += word.substring(end);
          syllables.add(syllable);

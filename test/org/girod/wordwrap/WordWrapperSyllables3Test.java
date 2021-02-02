@@ -39,11 +39,11 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @version 0.2
+ * @since 0.2
  */
-public class WordWrapperSyllablesTest {
+public class WordWrapperSyllables3Test {
 
-   public WordWrapperSyllablesTest() {
+   public WordWrapperSyllables3Test() {
    }
 
    @BeforeClass
@@ -67,56 +67,12 @@ public class WordWrapperSyllablesTest {
     */
    @Test
    public void testGetSyllables() {
-      System.out.println("WordWrapperSyllablesTest : testGetSyllables");
-      String sentence = "javatest";
+      System.out.println("WordWrapperSyllables3Test : testGetSyllables");
+      String sentence = "été";
 
       List<String> syllables = WordWrapper.getSyllables(sentence);
       assertNotNull("Result should not be null", syllables);
-      assertEquals("Result should have 3 syllables", 3, syllables.size());
-      assertEquals("First syllable", "ja", syllables.get(0));
-      assertEquals("Second syllable", "va", syllables.get(1));
-      assertEquals("Third syllable", "test", syllables.get(2));
+      assertEquals("Result should have 2 syllables", 2, syllables.size());
+      assertEquals("First syllable", "é", syllables.get(0));
    }
-
-   /**
-    * Test of getSyllables method, of class WordWrapper.
-    */
-   @Test
-   public void testGetSyllables2() {
-      System.out.println("WordWrapperSyllablesTest : testGetSyllables2");
-      String sentence = "http://java.net";
-
-      List<String> syllables = WordWrapper.getSyllables(sentence);
-      assertNotNull("Result should not be null", syllables);
-      assertEquals("Result should have 3 syllables", 3, syllables.size());
-      assertEquals("First syllable", "http://ja", syllables.get(0));
-      assertEquals("Second syllable", "va", syllables.get(1));
-      assertEquals("Third syllable", ".net", syllables.get(2));
-   }
-
-   /**
-    * Test of getSyllables method, of class WordWrapper.
-    */
-   @Test
-   public void testGetSyllables3() {
-      System.out.println("WordWrapperSyllablesTest : testGetSyllables3");
-      String sentence = "sentence";
-
-      List<String> result = WordWrapper.getSyllables(sentence);
-      assertNotNull("Result should not be null", result);
-      assertEquals("Result should have 3 syllables", 3, result.size());
-   }
-   
-   /**
-    * Test of getSyllables method, of class WordWrapper.
-    */
-   @Test
-   public void testGetSyllables4() {
-      System.out.println("WordWrapperSyllablesTest : testGetSyllables4");
-      String sentence = "ete";
-
-      List<String> result = WordWrapper.getSyllables(sentence);
-      assertNotNull("Result should not be null", result);
-      assertEquals("Result should have 2 syllables", 2, result.size());
-   }   
 }
