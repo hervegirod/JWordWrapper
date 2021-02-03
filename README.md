@@ -13,7 +13,8 @@ The class allows to:
  * First version
 
 ## 0.2
- * Fix a possible NPE when getting the syllables from a pure numeric value, take accented characters into account
+ * Fix a possible NPE when getting the syllables from a pure numeric value
+ * Take accented characters into account
  * Fix a possible case where some spaces would not be kept in the result
 
 ## 0.3
