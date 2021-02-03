@@ -16,6 +16,9 @@ The class allows to:
  * Fix a possible NPE when getting the syllables from a pure numeric value, take accented characters into account
  * Fix a possible case where some spaces would not be kept in the result
 
+## 0.3
+ * Fix cases where spaces where incorrectly put between syllables
+
 # Examples
   ```
   // return one line with "the sentence"

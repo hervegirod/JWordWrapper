@@ -182,10 +182,10 @@ public class WordWrapper {
                   currentLength = syllable.length();
                }
                isFirst = false;
-               if (tok.hasMoreTokens()) {
-                  currentBuf.append(" ");
-                  currentLength++;
-               }
+            }
+            if (tok.hasMoreTokens()) {
+               currentBuf.append(" ");
+               currentLength++;
             }
          }
       }

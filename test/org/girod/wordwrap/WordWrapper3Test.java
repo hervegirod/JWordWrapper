@@ -1,0 +1,80 @@
+/*
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+
+Alternatively if you have any questions about this project, you can visit
+the project website at the project page on https://github.com/hervegirod/JWordWrap
+ */
+package org.girod.wordwrap;
+
+import org.girod.jwordwrapper.WordWrapper;
+import java.util.List;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @since 0.3
+ */
+public class WordWrapper3Test {
+
+   public WordWrapper3Test() {
+   }
+
+   @BeforeClass
+   public static void setUpClass() {
+   }
+
+   @AfterClass
+   public static void tearDownClass() {
+   }
+
+   @Before
+   public void setUp() {
+   }
+
+   @After
+   public void tearDown() {
+   }
+
+   /**
+    * Test of wrap method, of class WordWrapper.
+    */
+   @Test
+   public void testWrap() {
+      System.out.println("WordWrapper3Test : testWrap");
+      String sentence = "Temperature de rosée de la Zone alpha1 : 16 degrés. Humidité : 48 %. Temperature : 28 degrés. Visibilité : 10000 metres. Direction du vent : 10 degrés. Vent : vitesse 9 KT direction 10 ";
+
+      List<String> result = WordWrapper.wrap(sentence, 70, 3, true);
+      assertNotNull("Result should not be null", result);
+      assertEquals("Result should have 3 lines", 3, result.size());
+      assertEquals("First line", "Temperature de rosée de la Zone alpha1 : 16 degrés. Humidité : 48 %.", result.get(0));
+      assertEquals("Second line", "Temperature : 28 degrés. Visibilité : 10000 metres. Direction du", result.get(1));
+      assertEquals("Third line", "vent : 10 degrés. Vent : vitesse 9 KT direction 10", result.get(2));
+   }
+}
